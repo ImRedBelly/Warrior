@@ -25,7 +25,7 @@ public:
 	AWarriorHeroController* GetHeroControllerFromActorInfo();
 
 	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
-	UHeroCombatComponent* GetHeroCombatComponent();
+	UHeroCombatComponent* GetHeroCombatComponentFromActorInfo();
 
 private:
 	TWeakObjectPtr<AWarriorHeroCharacter> CachedWarriorHeroCharacter;
