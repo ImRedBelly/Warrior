@@ -24,10 +24,12 @@ class WARRIOR_API UWarriorAttributeSet : public UAttributeSet
 public:
 	UWarriorAttributeSet();
 
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
 	UPROPERTY(BlueprintReadOnly, Category="Health")
 	FGameplayAttributeData CurrentHealth;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, CurrentHealth);
-	
+
 	UPROPERTY(BlueprintReadOnly, Category="Health")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, MaxHealth);
@@ -35,7 +37,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Rage")
 	FGameplayAttributeData CurrentRage;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, CurrentRage);
-	
+
 	UPROPERTY(BlueprintReadOnly, Category="Rage")
 	FGameplayAttributeData MaxRage;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, MaxRage);
@@ -47,4 +49,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Damage")
 	FGameplayAttributeData DefensePower;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DefensePower);
+
+	UPROPERTY(BlueprintReadOnly, Category="Damage")
+	FGameplayAttributeData DamageTaken;
+	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DamageTaken);
 };
