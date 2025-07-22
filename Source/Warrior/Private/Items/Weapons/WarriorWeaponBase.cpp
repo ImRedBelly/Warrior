@@ -3,7 +3,8 @@
 
 #include "Items/Weapons/WarriorWeaponBase.h"
 
-	#include "Components/BoxComponent.h"
+#include "WarriorFunctionLibrary.h"
+#include "Components/BoxComponent.h"
 
 AWarriorWeaponBase::AWarriorWeaponBase()
 {
@@ -31,14 +32,13 @@ void AWarriorWeaponBase::OnCollisionBoxBeginOverlap(
 {
 	APawn* WeaponOwningPawn = GetInstigator<APawn>();
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instiagtor as the owning pawn for the weapon: %s"), *GetName());
-
+	
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UWarriorFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
-		//TODO:Implement hit check for enemy characters
 	}
 }
 
@@ -51,14 +51,11 @@ void AWarriorWeaponBase::OnCollisionBoxEndOverlap(
 	APawn* WeaponOwningPawn = GetInstigator<APawn>();
 
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instiagtor as the owning pawn for the weapon: %s"), *GetName());
-
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UWarriorFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
-
-		//TODO:Implement hit check for enemy characters
 	}
 }
