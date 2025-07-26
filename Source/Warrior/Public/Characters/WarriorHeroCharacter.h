@@ -29,7 +29,7 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay() override;
-	
+
 	virtual UPawnUIComponent* GetPawnUIComponent() const override;
 	virtual UHeroUIComponent* GetHeroUIComponent() const override;
 
@@ -44,10 +44,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	UHeroCombatComponent* HeroCombatComponent;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI", meta=(AllowPrivateAccess="true"))
 	UHeroUIComponent* HeroUIComponent;
-	
+
 #pragma endregion
 
 
@@ -58,8 +58,13 @@ private:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 
+	void Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue);
+	void Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue);
+
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
+
+	FVector2D SwitchDirection = FVector2D::ZeroVector;
 
 #pragma endregion
 
