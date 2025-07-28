@@ -19,9 +19,9 @@ void UEnemyCombatComponent::OnHitTargetActor(AActor* HitActor)
 	//TODO implement block check
 	bool bIsValidBlock = false;
 	const bool bIsPlayerBlocking = UWarriorFunctionLibrary::NativeDoesActorHaveTag(HitActor, WarriorGameplayTags::Player_Status_Blocking);
-	const bool bIsMyAttackUnblockable = false;
-
-	if (bIsPlayerBlocking && !bIsMyAttackUnblockable)
+	const bool bIsMyAttackUnbloackable = UWarriorFunctionLibrary::NativeDoesActorHaveTag(GetOwningPawn(), WarriorGameplayTags::Enemy_Status_Unbloackable);
+	
+	if (bIsPlayerBlocking && !bIsMyAttackUnbloackable)
 	{
 		bIsValidBlock = UWarriorFunctionLibrary::IsValidBlock(GetOwningPawn(), HitActor);
 	}
