@@ -3,6 +3,7 @@
 
 #include "Components/Combat/PawnCombatComponent.h"
 
+#include "Characters/WarriorEnemyCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Items/Weapons/WarriorWeaponBase.h"
 
@@ -51,21 +52,11 @@ void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDama
 {
 	if (ToggleDamageType == EToggleDamageType::CurrentEquipWeapon)
 	{
-		AWarriorWeaponBase* WeaponToToggle = GetCharacterCurrentEquippedWeapon();
-		check(WeaponToToggle);
-
-		if (bShouldEnable)
-		{
-		}
-		else
-		{
-			OverlappedActors.Empty();
-		}
-
-		WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled(
-			bShouldEnable
-				? ECollisionEnabled::Type::QueryOnly
-				: ECollisionEnabled::Type::NoCollision);
+		ToggleCurrentEquippedWeaponCollision(bShouldEnable);
+	}
+	else
+	{
+		ToggleBodyCollisionBoxCollision(bShouldEnable, ToggleDamageType);
 	}
 }
 
@@ -75,4 +66,55 @@ void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor)
 
 void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor* HitActor)
 {
+}
+
+void UPawnCombatComponent::ToggleCurrentEquippedWeaponCollision(bool bShouldEnable)
+{
+	AWarriorWeaponBase* WeaponToToggle = GetCharacterCurrentEquippedWeapon();
+	check(WeaponToToggle);
+
+	if (bShouldEnable)
+	{
+	}
+	else
+	{
+		OverlappedActors.Empty();
+	}
+
+	WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled(
+		bShouldEnable
+			? ECollisionEnabled::Type::QueryOnly
+			: ECollisionEnabled::Type::NoCollision);
+}
+
+void UPawnCombatComponent::ToggleBodyCollisionBoxCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType)
+{
+	AWarriorEnemyCharacter* OwningEnemyCharacter = GetOwningPawn<AWarriorEnemyCharacter>();
+	check(OwningEnemyCharacter);
+
+	UBoxComponent* LeftHandCollisionBox = OwningEnemyCharacter->GetLeftHandCollisionBox();
+	UBoxComponent* RightHandCollisionBox = OwningEnemyCharacter->GetRightHandCollisionBox();
+	check(LeftHandCollisionBox && RightHandCollisionBox);
+
+	switch (ToggleDamageType)
+	{
+	case EToggleDamageType::RightHand:
+		RightHandCollisionBox->SetCollisionEnabled(
+			bShouldEnable
+				? ECollisionEnabled::Type::QueryOnly
+				: ECollisionEnabled::Type::NoCollision);
+		break;
+	case EToggleDamageType::LeftHand:
+		LeftHandCollisionBox->SetCollisionEnabled(
+			bShouldEnable
+				? ECollisionEnabled::Type::QueryOnly
+				: ECollisionEnabled::Type::NoCollision);
+		break;
+	default: ;
+	}
+
+	if (!bShouldEnable)
+	{
+		OverlappedActors.Empty();
+	}
 }
