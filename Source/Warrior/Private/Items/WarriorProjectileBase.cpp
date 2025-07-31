@@ -73,7 +73,7 @@ void AWarriorProjectileBase::OnHit(UPrimitiveComponent* HitComponent,
 	FGameplayEventData Data;
 	Data.Instigator = this;
 	Data.Target = HitPawn;
-	
+
 	if (bIsValidBlock)
 	{
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
@@ -96,6 +96,21 @@ void AWarriorProjectileBase::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
                                             bool bFromSweep,
                                             const FHitResult& SweepResult)
 {
+	if (OverlapActors.Contains(OtherActor)) return;
+
+	OverlapActors.AddUnique(OtherActor);
+
+	if (APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		if (UWarriorFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn))
+		{
+			FGameplayEventData Data;
+			Data.Instigator = GetInstigator();
+			Data.Target = HitPawn;
+
+			HandleApplyDamage(HitPawn, Data);
+		}
+	}
 }
 
 void AWarriorProjectileBase::HandleApplyDamage(APawn* InHitPawn, const FGameplayEventData& InPayload)
