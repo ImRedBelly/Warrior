@@ -24,14 +24,15 @@ class WARRIOR_API AWarriorHeroCharacter : public AWarriorBaseCharacter
 public:
 	AWarriorHeroCharacter();
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+	
+	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+	virtual UHeroUIComponent* GetHeroUIComponent() const override;
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay() override;
 
-	virtual UPawnUIComponent* GetPawnUIComponent() const override;
-	virtual UHeroUIComponent* GetHeroUIComponent() const override;
 
 private:
 #pragma region Components
@@ -64,6 +65,9 @@ private:
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
 
+	void Input_PickUpStonesStarted(const FInputActionValue& InputActionValue);
+
+	UPROPERTY()
 	FVector2D SwitchDirection = FVector2D::ZeroVector;
 
 #pragma endregion

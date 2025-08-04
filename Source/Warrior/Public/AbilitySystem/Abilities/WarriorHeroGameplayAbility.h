@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
 #include "WarriorHeroGameplayAbility.generated.h"
 
+class UHeroUIComponent;
 class AWarriorHeroController;
 class UHeroCombatComponent;
 class AWarriorHeroCharacter;
@@ -26,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
 	UHeroCombatComponent* GetHeroCombatComponentFromActorInfo();
+	
+	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
+	UHeroUIComponent* GetHeroUIComponentFromActorInfo();
 
 	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
 	FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(
@@ -36,7 +40,8 @@ public:
 	);
 
 	UFUNCTION(BlueprintCallable, Category="Warrior|Ability")
-	bool GetAbilityRemainingCooldownByTag(FGameplayTag InCooldownTag,float& TotalCooldownTime,float& RemainingCooldownTime);
+	bool GetAbilityRemainingCooldownByTag(FGameplayTag InCooldownTag, float& TotalCooldownTime, float& RemainingCooldownTime);
+
 private:
 	TWeakObjectPtr<AWarriorHeroCharacter> CachedWarriorHeroCharacter;
 	TWeakObjectPtr<AWarriorHeroController> CachedWarriorHeroController;
