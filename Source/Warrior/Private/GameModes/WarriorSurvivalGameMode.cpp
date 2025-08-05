@@ -4,6 +4,7 @@
 #include "GameModes/WarriorSurvivalGameMode.h"
 
 #include "NavigationSystem.h"
+#include "WarriorFunctionLibrary.h"
 #include "Characters/WarriorEnemyCharacter.h"
 #include "Engine/AssetManager.h"
 #include "Engine/TargetPoint.h"
@@ -73,6 +74,17 @@ void AWarriorSurvivalGameMode::Tick(float DeltaSeconds)
 	}
 }
 
+void AWarriorSurvivalGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	EWarriorGameDifficulty SavedGameDifficulty;
+	if (UWarriorFunctionLibrary::TryLoadSavedGameDifficulty(SavedGameDifficulty))
+	{
+		CurrentGameDifficulty = SavedGameDifficulty;
+	}
+}
+
 void AWarriorSurvivalGameMode::SetCurrentSurvivalGameModeState(EWarriorSurvivalGameModeState InState)
 {
 	CurrentSurvivalGameModeState = InState;
@@ -124,10 +136,10 @@ int32 AWarriorSurvivalGameMode::TrySpawnWaveEnemies()
 {
 	if (TargetPointsArray.IsEmpty())
 	{
-		UGameplayStatics::GetAllActorsOfClass(this,ATargetPoint::StaticClass(),TargetPointsArray);
+		UGameplayStatics::GetAllActorsOfClass(this, ATargetPoint::StaticClass(), TargetPointsArray);
 	}
-	
-	checkf(!TargetPointsArray.IsEmpty(),TEXT("No valid target point found in level: %s for spawning enemies"),*GetWorld()->GetName());
+
+	checkf(!TargetPointsArray.IsEmpty(), TEXT("No valid target point found in level: %s for spawning enemies"), *GetWorld()->GetName());
 
 	uint32 EnemiesSpawnedThisTime = 0;
 
@@ -136,33 +148,34 @@ int32 AWarriorSurvivalGameMode::TrySpawnWaveEnemies()
 
 	for (const FWarriorEnemyWaveSpawnerInfo& SpawnerInfo : GetCurrentWaveSpawnerTableRow()->EnemyWaveSpawnerDefinitions)
 	{
-		if(SpawnerInfo.SoftEnemyClassToSpawn.IsNull()) continue;
+		if (SpawnerInfo.SoftEnemyClassToSpawn.IsNull()) continue;
 
-		const int32 NumToSpawn = FMath::RandRange(SpawnerInfo.MinPerSpawnCount,SpawnerInfo.MaxPerSpawnCount);
+		const int32 NumToSpawn = FMath::RandRange(SpawnerInfo.MinPerSpawnCount, SpawnerInfo.MaxPerSpawnCount);
 
 		UClass* LoadedEnemyClass = PreLoadedEnemyClassMap.FindChecked(SpawnerInfo.SoftEnemyClassToSpawn);
 
 		for (int32 i = 0; i < NumToSpawn; i++)
 		{
-			const int32 RandomTargetPointIndex = FMath::RandRange(0,TargetPointsArray.Num() - 1);
+			const int32 RandomTargetPointIndex = FMath::RandRange(0, TargetPointsArray.Num() - 1);
 			const FVector SpawnOrigin = TargetPointsArray[RandomTargetPointIndex]->GetActorLocation();
 			const FRotator SpawnRotation = TargetPointsArray[RandomTargetPointIndex]->GetActorForwardVector().ToOrientationRotator();
 
 			FVector RandomLocation;
-			UNavigationSystemV1::K2_GetRandomLocationInNavigableRadius(this,SpawnOrigin,RandomLocation,400.f);
+			UNavigationSystemV1::K2_GetRandomLocationInNavigableRadius(this, SpawnOrigin, RandomLocation, 400.f);
 
-			RandomLocation += FVector(0.f,0.f,150.f);
+			RandomLocation += FVector(0.f, 0.f, 150.f);
 
-			AWarriorEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AWarriorEnemyCharacter>(LoadedEnemyClass,RandomLocation,SpawnRotation,SpawnParam);
+			AWarriorEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AWarriorEnemyCharacter>(
+				LoadedEnemyClass, RandomLocation, SpawnRotation, SpawnParam);
 
 			if (SpawnedEnemy)
-			{	
-				SpawnedEnemy->OnDestroyed.AddUniqueDynamic(this,&ThisClass::OnEnemyDestroyed);
+			{
+				SpawnedEnemy->OnDestroyed.AddUniqueDynamic(this, &ThisClass::OnEnemyDestroyed);
 
 				EnemiesSpawnedThisTime++;
 				TotalSpawnedEnemiesThisWaveCounter++;
 			}
-			
+
 			if (!ShouldKeepSpawnEnemies())
 			{
 				return EnemiesSpawnedThisTime;
@@ -195,10 +208,10 @@ void AWarriorSurvivalGameMode::OnEnemyDestroyed(AActor* DestroyedActor)
 }
 
 void AWarriorSurvivalGameMode::RegisterSpawnedEnemies(const TArray<AWarriorEnemyCharacter*>& InEnemiesToRegister)
-	{
+{
 	for (AWarriorEnemyCharacter* SpawnedEnemy : InEnemiesToRegister)
 	{
-		if(SpawnedEnemy)
+		if (SpawnedEnemy)
 		{
 			SpawnedEnemy->OnDestroyed.AddUniqueDynamic(this, &AWarriorSurvivalGameMode::OnEnemyDestroyed);
 			CurrentSpawnedEnemiesCounter++;

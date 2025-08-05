@@ -9,6 +9,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "WarriorFunctionLibrary.generated.h"
 
+class UWarriorGameInstance;
 class UPawnCombatComponent;
 class UWarriorAbilitySystemComponent;
 
@@ -68,4 +69,17 @@ public:
 		EWarriorCountDownActionInput CountDownInput,
 		UPARAM(DisplayName = "Output")EWarriorCountDownActionOutput& CountDownOutput,
 		FLatentActionInfo LatentInfo);
+
+
+	UFUNCTION(BlueprintPure, Category = "Warrior|FunctionLibrary", meta=(WorldContext = "WorldContextObject"))
+	static UWarriorGameInstance* GetWarriorGameInstance(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary", meta=(WorldContext = "WorldContextObject"))
+	static void ToggleInputMode(const UObject* WorldContextObject, EWarriorInputMode InInputMode);
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+	static void SaveCurrentGameDifficulty(EWarriorGameDifficulty InDifficultyToSave);
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+	static bool TryLoadSavedGameDifficulty(EWarriorGameDifficulty& OutSavedDifficulty);
 };
