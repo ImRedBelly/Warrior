@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "WarriorAIController.generated.h"
 
+class UStateTreeAIComponent;
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 
@@ -24,6 +25,9 @@ public:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStateTreeAIComponent* StateTreeAIComponent;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAIPerceptionComponent* EnemyPerceptionComponent;
 

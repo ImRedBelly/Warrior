@@ -24,6 +24,9 @@ public class Warrior : ModuleRules
 			"Niagara",
 			"NavigationSystem",
 			"MoviePlayer",
+            "StateTreeModule",
+            "GameplayStateTreeModule", 
+            "AIModule" 
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
